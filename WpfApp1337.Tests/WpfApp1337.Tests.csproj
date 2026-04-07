@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.6.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\WpfApp1337\Models\UserRole.cs" Link="Models\UserRole.cs" />
+    <Compile Include="..\WpfApp1337\Models\UserAccount.cs" Link="Models\UserAccount.cs" />
+    <Compile Include="..\WpfApp1337\Models\Product.cs" Link="Models\Product.cs" />
+    <Compile Include="..\WpfApp1337\Models\Supplier.cs" Link="Models\Supplier.cs" />
+    <Compile Include="..\WpfApp1337\Models\Order.cs" Link="Models\Order.cs" />
+    <Compile Include="..\WpfApp1337\Services\IStoreRepository.cs" Link="Services\IStoreRepository.cs" />
+    <Compile Include="..\WpfApp1337\Services\InMemoryStoreRepository.cs" Link="Services\InMemoryStoreRepository.cs" />
+    <Compile Include="..\WpfApp1337\Services\AuthService.cs" Link="Services\AuthService.cs" />
+    <Compile Include="..\WpfApp1337\Services\PermissionService.cs" Link="Services\PermissionService.cs" />
+    <Compile Include="..\WpfApp1337\Services\StoreDataService.cs" Link="Services\StoreDataService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\WpfApp1337\Models\CartItem.cs" Link="Models\CartItem.cs" />
+  </ItemGroup>
+</Project>
