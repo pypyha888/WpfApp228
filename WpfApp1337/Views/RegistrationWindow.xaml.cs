@@ -25,6 +25,8 @@ namespace ApplianceStoreIS.Views
                 LoginTextBox.Text,
                 PasswordBox.Password,
                 ConfirmPasswordBox.Password,
+                UserRole.User,
+                string.Empty,
                 role,
                 PrivilegedCodePasswordBox.Password,
                 out string error))

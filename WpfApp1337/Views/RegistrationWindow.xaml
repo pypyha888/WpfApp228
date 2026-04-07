@@ -1,6 +1,7 @@
 <Window x:Class="ApplianceStoreIS.Views.RegistrationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Регистрация пользователя" Height="420" Width="520" MinWidth="480" MinHeight="380"
         Title="Регистрация пользователя" Height="470" Width="520" MinWidth="480" MinHeight="420"
         WindowStartupLocation="CenterOwner" Icon="{StaticResource AppWindowIcon}">
     <Grid Margin="16" Background="#F4F6F8">
@@ -33,6 +34,7 @@
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Повторите пароль:" Margin="0,0,8,8" VerticalAlignment="Center"/>
                 <PasswordBox x:Name="ConfirmPasswordBox" Grid.Row="3" Grid.Column="1" Margin="0,0,0,8"/>
 
+                <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Зарегистрировать" Height="32" Margin="0,10,0,0" Click="OnRegisterClick"/>
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Роль:" Margin="0,0,8,8" VerticalAlignment="Center"/>
                 <ComboBox x:Name="RoleComboBox" Grid.Row="4" Grid.Column="1" Margin="0,0,0,8" SelectedIndex="0">
                     <ComboBoxItem Content="Пользователь" Tag="User"/>
