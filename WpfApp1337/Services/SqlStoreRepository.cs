@@ -232,6 +232,18 @@ BEGIN
     )
 END
 
+IF NOT EXISTS (SELECT 1 FROM Users WHERE Login='admin')
+BEGIN
+    INSERT INTO Users(Login, Password, FullName, Role)
+    VALUES ('admin', 'Admin123!', N'Системный администратор', 'Admin')
+END
+
+IF NOT EXISTS (SELECT 1 FROM Users WHERE Login='manager')
+BEGIN
+    INSERT INTO Users(Login, Password, FullName, Role)
+    VALUES ('manager', 'Manager123!', N'Менеджер магазина', 'Manager')
+END
+
 IF OBJECT_ID('Products','U') IS NULL
 BEGIN
     CREATE TABLE Products (
