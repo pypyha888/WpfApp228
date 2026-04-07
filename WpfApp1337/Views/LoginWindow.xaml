@@ -37,6 +37,7 @@
 
                 <Button Grid.Row="2" Grid.ColumnSpan="2" Content="Войти" Height="32" Margin="0,8,0,0" Click="OnLoginClick"/>
 
+                <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Margin="0,14,0,6" Foreground="#666" Text="Создайте аккаунт через кнопку «Регистрация»."/>
                 <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Margin="0,14,0,6" FontWeight="Bold" Text="Тестовые учетные записи:"/>
                 <TextBlock Grid.Row="4" Grid.ColumnSpan="2" TextWrapping="Wrap" Foreground="#444"
                            Text="admin/Admin123! (Администратор), manager/Manager123! (Менеджер), user/User123! (Пользователь)"/>

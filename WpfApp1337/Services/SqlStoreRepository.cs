@@ -234,12 +234,18 @@ IF OBJECT_ID('Orders','U') IS NULL
 BEGIN
     CREATE TABLE Orders (
         Id INT IDENTITY(1,1) PRIMARY KEY,
+        UserLogin NVARCHAR(50) NOT NULL,
         ProductName NVARCHAR(120) NOT NULL,
         Quantity INT NOT NULL,
         OrderDate DATETIME2 NOT NULL,
         Status NVARCHAR(40) NOT NULL
     )
 END
+IF COL_LENGTH('Orders', 'UserLogin') IS NULL
+BEGIN
+    ALTER TABLE Orders ADD UserLogin NVARCHAR(50) NULL;
+    UPDATE Orders SET UserLogin = 'legacy_user' WHERE UserLogin IS NULL;
+    ALTER TABLE Orders ALTER COLUMN UserLogin NVARCHAR(50) NOT NULL;
 
 IF NOT EXISTS(SELECT 1 FROM Users)
 BEGIN

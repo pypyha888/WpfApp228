@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -11,6 +12,8 @@ namespace ApplianceStoreIS.Views
     public partial class DashboardWindow : Window
     {
         private readonly UserAccount currentUser;
+        private readonly StoreDataService storeDataService;
+        private readonly ObservableCollection<CartItem> cartItems;
         private readonly AuthService authService;
         private readonly StoreDataService storeDataService;
         private ICollectionView productsView;
@@ -19,6 +22,15 @@ namespace ApplianceStoreIS.Views
         {
             InitializeComponent();
             currentUser = user;
+            this.storeDataService = storeDataService;
+            cartItems = new ObservableCollection<CartItem>();
+
+            UserHeaderTextBlock.Text = $"Пользователь: {currentUser.FullName} | Роль: {currentUser.Role}";
+            ProfileTextBlock.Text = $"Личный кабинет: {currentUser.FullName} ({currentUser.Login})";
+
+            DataContext = storeDataService;
+            CartDataGrid.ItemsSource = cartItems;
+            OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
             this.authService = authService;
             this.storeDataService = storeDataService;
 
@@ -31,6 +43,7 @@ namespace ApplianceStoreIS.Views
             SetupFilterAndSortOptions();
             ApplyAccessPolicy();
             ApplyFilters();
+            UpdateCartSummary();
         }
 
         private void SetupFilterAndSortOptions()
@@ -170,6 +183,68 @@ namespace ApplianceStoreIS.Views
             }
         }
 
+        private void OnAddToCartClick(object sender, RoutedEventArgs e)
+        {
+            if (!(ProductsDataGrid.SelectedItem is Product selectedProduct))
+            {
+                MessageBox.Show("Выберите товар для добавления в корзину.", "Корзина", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var existing = cartItems.FirstOrDefault(c => c.ProductId == selectedProduct.Id);
+            if (existing == null)
+            {
+                cartItems.Add(new CartItem
+                {
+                    ProductId = selectedProduct.Id,
+                    ProductName = selectedProduct.Name,
+                    UnitPrice = selectedProduct.Price,
+                    Quantity = 1
+                });
+            }
+            else
+            {
+                existing.Quantity += 1;
+                CartDataGrid.Items.Refresh();
+            }
+
+            UpdateCartSummary();
+        }
+
+        private void OnRemoveFromCartClick(object sender, RoutedEventArgs e)
+        {
+            if (CartDataGrid.SelectedItem is CartItem selected)
+            {
+                cartItems.Remove(selected);
+                UpdateCartSummary();
+            }
+        }
+
+        private void OnCheckoutClick(object sender, RoutedEventArgs e)
+        {
+            if (!cartItems.Any())
+            {
+                MessageBox.Show("Корзина пуста.", "Оформление заказа", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            foreach (var item in cartItems)
+            {
+                storeDataService.AddOrder(currentUser.Login, item.ProductName, item.Quantity);
+            }
+
+            cartItems.Clear();
+            OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
+            UpdateCartSummary();
+
+            MessageBox.Show("Заказ(ы) успешно оформлен(ы).", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void UpdateCartSummary()
+        {
+            CartTotalTextBlock.Text = $"Итого: {cartItems.Sum(i => i.TotalPrice):N2} ₽";
+        }
+
         private void RefreshCategories()
         {
             var selectedCategory = CategoryFilterComboBox.SelectedItem?.ToString();
@@ -178,6 +253,8 @@ namespace ApplianceStoreIS.Views
             {
                 CategoryFilterComboBox.SelectedItem = selectedCategory;
             }
+
+            OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
             ApplyFilters();
         }
 

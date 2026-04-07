@@ -1,0 +1,2 @@
+<#@ template language="C#" #>
+<#-- Заглушка шаблона Context.tt. Полная версия генерируется Visual Studio для EDMX. --#>

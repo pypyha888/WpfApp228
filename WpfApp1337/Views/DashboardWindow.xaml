@@ -1,6 +1,7 @@
 <Window x:Class="ApplianceStoreIS.Views.DashboardWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Панель управления — Магазин бытовой техники" Height="640" Width="1040" MinWidth="920" MinHeight="580"
         Title="Панель управления — Магазин бытовой техники" Height="620" Width="1000" MinWidth="900" MinHeight="560"
         WindowStartupLocation="CenterScreen" Icon="{StaticResource AppWindowIcon}">
     <Grid Background="#F4F6F8" Margin="12">
@@ -58,9 +59,38 @@
                     </DataGrid>
 
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                        <Button x:Name="AddToCartButton" Content="В корзину" Width="110" Margin="0,0,8,0" Click="OnAddToCartClick"/>
                         <Button x:Name="AddProductButton" Content="Добавить" Width="110" Margin="0,0,8,0" Click="OnAddProductClick"/>
                         <Button x:Name="EditProductButton" Content="Изменить" Width="110" Margin="0,0,8,0" Click="OnEditProductClick"/>
                         <Button x:Name="DeleteProductButton" Content="Удалить" Width="110" Click="OnDeleteProductClick"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Личный кабинет и корзина">
+                <Grid Margin="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="ProfileTextBlock" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <DataGrid x:Name="CartDataGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID товара" Binding="{Binding ProductId}" Width="90"/>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="120"/>
+                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100"/>
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                        <TextBlock x:Name="CartTotalTextBlock" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,16,0"/>
+                        <Button Content="Удалить из корзины" Width="150" Margin="0,0,8,0" Click="OnRemoveFromCartClick"/>
+                        <Button Content="Оформить заказ" Width="130" Click="OnCheckoutClick"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -76,6 +106,14 @@
             </TabItem>
 
             <TabItem x:Name="OrdersTab" Header="Заказы">
+                <DataGrid x:Name="OrdersDataGrid" IsReadOnly="True" AutoGenerateColumns="False" Margin="6">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                        <DataGridTextColumn Header="Логин" Binding="{Binding UserLogin}" Width="130"/>
+                        <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                        <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="120"/>
+                        <DataGridTextColumn Header="Дата" Binding="{Binding OrderDate}" Width="150"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="140"/>
                 <DataGrid ItemsSource="{Binding Orders}" IsReadOnly="True" AutoGenerateColumns="False" Margin="6">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>

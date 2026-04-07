@@ -20,6 +20,14 @@ namespace ApplianceStoreIS.Views
             var selectedRole = (RoleComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "User";
             var role = (UserRole)System.Enum.Parse(typeof(UserRole), selectedRole);
 
+            if (authService.Register(
+                FullNameTextBox.Text,
+                LoginTextBox.Text,
+                PasswordBox.Password,
+                ConfirmPasswordBox.Password,
+                role,
+                PrivilegedCodePasswordBox.Password,
+                out string error))
             if (authService.Register(FullNameTextBox.Text, LoginTextBox.Text, PasswordBox.Password, role, out string error))
             {
                 MessageBox.Show("Регистрация выполнена успешно.", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
