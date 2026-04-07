@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Этот файл-заглушка добавлен для соблюдения структуры ApplicationData/...
+ В Visual Studio необходимо пересоздать его через:
+ Add -> New Item -> ADO.NET Entity Data Model -> Database First.
+ Имя: ApplianceStoreEntities.edmx
+-->
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <edmx:Runtime />
+</edmx:Edmx>

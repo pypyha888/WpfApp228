@@ -1,9 +1,12 @@
-﻿<Application x:Class="WpfApp1337.App"
+<Application x:Class="ApplianceStoreIS.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:WpfApp1337"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Views/LoginWindow.xaml">
     <Application.Resources>
-         
+        <DrawingImage x:Key="AppWindowIcon">
+            <DrawingImage.Drawing>
+                <GeometryDrawing Brush="#2C7BE5" Geometry="F1 M 2,2 L 14,2 14,14 2,14 Z M 3.5,4.5 L 12.5,4.5 12.5,6.5 3.5,6.5 Z M 4,8 L 7,8 7,12 4,12 Z M 8.5,8 L 12,8 12,12 8.5,12 Z"/>
+            </DrawingImage.Drawing>
+        </DrawingImage>
     </Application.Resources>
 </Application>
