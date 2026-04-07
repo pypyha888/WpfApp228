@@ -20,6 +20,18 @@ namespace ApplianceStoreIS.Tests
         }
 
         [TestMethod]
+        public void Authenticate_WithValidAdminCredentials_ReturnsAdminUser()
+        {
+            var authService = new AuthService(new InMemoryStoreRepository());
+            bool registered = authService.Register("Администратор", "admin", "Admin123!", "Admin123!", UserRole.Admin, AuthService.PrivilegedRoleCode, out _);
+            var user = authService.Authenticate("admin", "Admin123!");
+
+            Assert.IsTrue(registered);
+            Assert.IsNotNull(user);
+            Assert.AreEqual(UserRole.Admin, user.Role);
+        }
+
+        [TestMethod]
         public void Register_ManagerWithoutPrivilegedCode_ReturnsFalse()
         {
             var authService = new AuthService(new InMemoryStoreRepository());
@@ -27,6 +39,18 @@ namespace ApplianceStoreIS.Tests
 
             Assert.IsFalse(result);
             Assert.IsTrue(error.Contains("специальный код"));
+        }
+
+        [TestMethod]
+        public void Register_WithDuplicateLogin_ReturnsFalse()
+        {
+            var authService = new AuthService(new InMemoryStoreRepository());
+            authService.Register("Иван Иванов", "ivanov", "Qwerty12", "Qwerty12", UserRole.User, string.Empty, out _);
+
+            bool duplicateResult = authService.Register("Иван Петров", "ivanov", "Qwerty12", "Qwerty12", UserRole.User, string.Empty, out string error);
+
+            Assert.IsFalse(duplicateResult);
+            Assert.IsTrue(error.Length > 0);
         }
 
         [TestMethod]

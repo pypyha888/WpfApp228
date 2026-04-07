@@ -15,6 +15,16 @@ namespace ApplianceStoreIS.Services
             this.repository = repository;
         }
 
+        public bool Register(string fullName, string login, string password, UserRole role, out string error)
+        {
+            return Register(fullName, login, password, password, role, string.Empty, out error);
+        }
+
+        public bool Register(string fullName, string login, string password, string confirmPassword, UserRole role, out string error)
+        {
+            return Register(fullName, login, password, confirmPassword, role, string.Empty, out error);
+        }
+
         public bool Register(string fullName, string login, string password, string confirmPassword, UserRole role, string privilegedCode, out string error)
         {
             error = string.Empty;
