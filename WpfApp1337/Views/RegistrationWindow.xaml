@@ -1,0 +1,41 @@
+<Window x:Class="ApplianceStoreIS.Views.RegistrationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Регистрация пользователя" Height="390" Width="500" MinWidth="460" MinHeight="340"
+        WindowStartupLocation="CenterOwner" Icon="{StaticResource AppWindowIcon}">
+    <Grid Margin="16" Background="#F4F6F8">
+        <Border Background="White" CornerRadius="8" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="ФИО:" Margin="0,0,8,8" VerticalAlignment="Center"/>
+                <TextBox x:Name="FullNameTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Логин:" Margin="0,0,8,8" VerticalAlignment="Center"/>
+                <TextBox x:Name="LoginTextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Пароль:" Margin="0,0,8,8" VerticalAlignment="Center"/>
+                <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Роль:" Margin="0,0,8,8" VerticalAlignment="Center"/>
+                <ComboBox x:Name="RoleComboBox" Grid.Row="3" Grid.Column="1" Margin="0,0,0,8" SelectedIndex="0">
+                    <ComboBoxItem Content="Пользователь" Tag="User"/>
+                    <ComboBoxItem Content="Менеджер" Tag="Manager"/>
+                    <ComboBoxItem Content="Администратор" Tag="Admin"/>
+                </ComboBox>
+
+                <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Зарегистрировать" Height="32" Margin="0,10,0,0" Click="OnRegisterClick"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
