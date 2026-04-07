@@ -14,6 +14,8 @@ namespace ApplianceStoreIS.Views
         private readonly UserAccount currentUser;
         private readonly StoreDataService storeDataService;
         private readonly ObservableCollection<CartItem> cartItems;
+        private readonly AuthService authService;
+        private readonly StoreDataService storeDataService;
         private ICollectionView productsView;
 
         public DashboardWindow(UserAccount user, AuthService authService, StoreDataService storeDataService)
@@ -29,6 +31,11 @@ namespace ApplianceStoreIS.Views
             DataContext = storeDataService;
             CartDataGrid.ItemsSource = cartItems;
             OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
+            this.authService = authService;
+            this.storeDataService = storeDataService;
+
+            UserHeaderTextBlock.Text = $"Пользователь: {currentUser.FullName} | Роль: {currentUser.Role}";
+            DataContext = storeDataService;
 
             productsView = CollectionViewSource.GetDefaultView(storeDataService.Products);
             ProductsDataGrid.ItemsSource = productsView;

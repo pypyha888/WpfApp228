@@ -18,7 +18,5 @@ namespace ApplianceStoreIS.Services
         void SaveProduct(Product product);
 
         void DeleteProduct(int productId);
-
-        void AddOrder(Order order);
     }
 }

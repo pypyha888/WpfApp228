@@ -1,24 +1,20 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data.SqlClient;
-using ApplianceStoreIS.ApplicationData;
 using ApplianceStoreIS.Models;
 
 namespace ApplianceStoreIS.Services
 {
     public class SqlStoreRepository : IStoreRepository
     {
-        private readonly string dbName;
-        private readonly string appConnection;
-        private readonly string masterConnection;
+        private const string MasterConnection = "Server=(localdb)\\MSSQLLocalDB;Integrated Security=true;Initial Catalog=master;";
+        private const string DbName = "ApplianceStoreISDb";
+        private readonly string appConnection = $"Server=(localdb)\\MSSQLLocalDB;Integrated Security=true;Initial Catalog={DbName};";
 
         public SqlStoreRepository()
         {
-            appConnection = ApplianceStoreEntitiesConnection.GetConnectionString();
-            masterConnection = ApplianceStoreEntitiesConnection.GetMasterConnectionString();
-            dbName = new SqlConnectionStringBuilder(appConnection).InitialCatalog;
             EnsureDatabase();
-            EnsureTables();
+            EnsureTablesAndSeed();
         }
 
         public ObservableCollection<Product> GetProducts()
@@ -76,7 +72,7 @@ namespace ApplianceStoreIS.Services
         {
             var items = new ObservableCollection<Order>();
             using (var conn = new SqlConnection(appConnection))
-            using (var cmd = new SqlCommand("SELECT Id, UserLogin, ProductName, Quantity, OrderDate, Status FROM Orders ORDER BY Id", conn))
+            using (var cmd = new SqlCommand("SELECT Id, ProductName, Quantity, OrderDate, Status FROM Orders ORDER BY Id", conn))
             {
                 conn.Open();
                 using (var reader = cmd.ExecuteReader())
@@ -86,11 +82,10 @@ namespace ApplianceStoreIS.Services
                         items.Add(new Order
                         {
                             Id = reader.GetInt32(0),
-                            UserLogin = reader.GetString(1),
-                            ProductName = reader.GetString(2),
-                            Quantity = reader.GetInt32(3),
-                            OrderDate = reader.GetDateTime(4),
-                            Status = reader.GetString(5)
+                            ProductName = reader.GetString(1),
+                            Quantity = reader.GetInt32(2),
+                            OrderDate = reader.GetDateTime(3),
+                            Status = reader.GetString(4)
                         });
                     }
                 }
@@ -194,32 +189,17 @@ namespace ApplianceStoreIS.Services
             }
         }
 
-        public void AddOrder(Order order)
-        {
-            using (var conn = new SqlConnection(appConnection))
-            using (var cmd = new SqlCommand("INSERT INTO Orders (UserLogin, ProductName, Quantity, OrderDate, Status) VALUES (@UserLogin,@ProductName,@Quantity,@OrderDate,@Status); SELECT CAST(SCOPE_IDENTITY() as int);", conn))
-            {
-                cmd.Parameters.AddWithValue("@UserLogin", order.UserLogin);
-                cmd.Parameters.AddWithValue("@ProductName", order.ProductName);
-                cmd.Parameters.AddWithValue("@Quantity", order.Quantity);
-                cmd.Parameters.AddWithValue("@OrderDate", order.OrderDate);
-                cmd.Parameters.AddWithValue("@Status", order.Status);
-                conn.Open();
-                order.Id = (int)cmd.ExecuteScalar();
-            }
-        }
-
         private void EnsureDatabase()
         {
-            using (var conn = new SqlConnection(masterConnection))
-            using (var cmd = new SqlCommand($"IF DB_ID('{dbName}') IS NULL CREATE DATABASE [{dbName}]", conn))
+            using (var conn = new SqlConnection(MasterConnection))
+            using (var cmd = new SqlCommand($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE [{DbName}]", conn))
             {
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
         }
 
-        private void EnsureTables()
+        private void EnsureTablesAndSeed()
         {
             const string script = @"
 IF OBJECT_ID('Users','U') IS NULL
@@ -266,6 +246,35 @@ BEGIN
     ALTER TABLE Orders ADD UserLogin NVARCHAR(50) NULL;
     UPDATE Orders SET UserLogin = 'legacy_user' WHERE UserLogin IS NULL;
     ALTER TABLE Orders ALTER COLUMN UserLogin NVARCHAR(50) NOT NULL;
+
+IF NOT EXISTS(SELECT 1 FROM Users)
+BEGIN
+    INSERT INTO Users(Login, Password, FullName, Role) VALUES
+    ('admin','Admin123!','Системный администратор','Admin'),
+    ('manager','Manager123!','Менеджер магазина','Manager'),
+    ('user','User123!','Покупатель','User')
+END
+
+IF NOT EXISTS(SELECT 1 FROM Products)
+BEGIN
+    INSERT INTO Products(Name, Category, Price, Quantity, Brand) VALUES
+    (N'Стиральная машина',N'Крупная техника',45990,8,N'LG'),
+    (N'Пылесос',N'Малая техника',12990,15,N'Samsung'),
+    (N'Холодильник',N'Крупная техника',73990,4,N'Bosch')
+END
+
+IF NOT EXISTS(SELECT 1 FROM Suppliers)
+BEGIN
+    INSERT INTO Suppliers(Name, ContactPhone) VALUES
+    (N'ТехноОпт',N'+7 (495) 100-10-10'),
+    (N'БытПоставка',N'+7 (495) 200-20-20')
+END
+
+IF NOT EXISTS(SELECT 1 FROM Orders)
+BEGIN
+    INSERT INTO Orders(ProductName, Quantity, OrderDate, Status) VALUES
+    (N'Стиральная машина',2,DATEADD(DAY,-1,GETDATE()),N'Новый'),
+    (N'Холодильник',1,GETDATE(),N'В обработке')
 END";
 
             using (var conn = new SqlConnection(appConnection))

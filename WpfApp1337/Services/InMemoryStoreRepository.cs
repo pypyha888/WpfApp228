@@ -36,8 +36,8 @@ namespace ApplianceStoreIS.Services
 
             orders = new ObservableCollection<Order>
             {
-                new Order { Id = 1, UserLogin = "user", ProductName = "Стиральная машина", Quantity = 2, OrderDate = DateTime.Today.AddDays(-1), Status = "Новый" },
-                new Order { Id = 2, UserLogin = "user", ProductName = "Холодильник", Quantity = 1, OrderDate = DateTime.Today, Status = "В обработке" }
+                new Order { Id = 1, ProductName = "Стиральная машина", Quantity = 2, OrderDate = DateTime.Today.AddDays(-1), Status = "Новый" },
+                new Order { Id = 2, ProductName = "Холодильник", Quantity = 1, OrderDate = DateTime.Today, Status = "В обработке" }
             };
         }
 
@@ -85,12 +85,6 @@ namespace ApplianceStoreIS.Services
             {
                 products.Remove(existing);
             }
-        }
-
-        public void AddOrder(Order order)
-        {
-            order.Id = orders.Any() ? orders.Max(o => o.Id) + 1 : 1;
-            orders.Add(order);
         }
     }
 }

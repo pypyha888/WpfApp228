@@ -6,8 +6,6 @@ namespace ApplianceStoreIS.Services
 {
     public class AuthService
     {
-        public const string PrivilegedRoleCode = "ADMIN-STORE-2026";
-
         private readonly IStoreRepository repository;
 
         public AuthService(IStoreRepository repository)
@@ -16,16 +14,6 @@ namespace ApplianceStoreIS.Services
         }
 
         public bool Register(string fullName, string login, string password, UserRole role, out string error)
-        {
-            return Register(fullName, login, password, password, role, string.Empty, out error);
-        }
-
-        public bool Register(string fullName, string login, string password, string confirmPassword, UserRole role, out string error)
-        {
-            return Register(fullName, login, password, confirmPassword, role, string.Empty, out error);
-        }
-
-        public bool Register(string fullName, string login, string password, string confirmPassword, UserRole role, string privilegedCode, out string error)
         {
             error = string.Empty;
 
@@ -44,18 +32,6 @@ namespace ApplianceStoreIS.Services
             if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
             {
                 error = "Пароль должен содержать минимум 6 символов.";
-                return false;
-            }
-
-            if (password != confirmPassword)
-            {
-                error = "Пароль и подтверждение пароля не совпадают.";
-                return false;
-            }
-
-            if ((role == UserRole.Admin || role == UserRole.Manager) && privilegedCode != PrivilegedRoleCode)
-            {
-                error = "Неверный специальный код для роли Администратор/Менеджер.";
                 return false;
             }
 
