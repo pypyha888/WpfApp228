@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ApplianceStoreIS.Models;
@@ -13,10 +14,31 @@ namespace ApplianceStoreIS.Services
 
         public InMemoryStoreRepository()
         {
-            users = new ObservableCollection<UserAccount>();
-            products = new ObservableCollection<Product>();
-            suppliers = new ObservableCollection<Supplier>();
-            orders = new ObservableCollection<Order>();
+            users = new ObservableCollection<UserAccount>
+            {
+                new UserAccount { Login = "admin", Password = "Admin123!", FullName = "Системный администратор", Role = UserRole.Admin },
+                new UserAccount { Login = "manager", Password = "Manager123!", FullName = "Менеджер магазина", Role = UserRole.Manager },
+                new UserAccount { Login = "user", Password = "User123!", FullName = "Покупатель", Role = UserRole.User }
+            };
+
+            products = new ObservableCollection<Product>
+            {
+                new Product { Id = 1, Name = "Стиральная машина", Category = "Крупная техника", Price = 45990m, Quantity = 8, Brand = "LG" },
+                new Product { Id = 2, Name = "Пылесос", Category = "Малая техника", Price = 12990m, Quantity = 15, Brand = "Samsung" },
+                new Product { Id = 3, Name = "Холодильник", Category = "Крупная техника", Price = 73990m, Quantity = 4, Brand = "Bosch" }
+            };
+
+            suppliers = new ObservableCollection<Supplier>
+            {
+                new Supplier { Id = 1, Name = "ТехноОпт", ContactPhone = "+7 (495) 100-10-10" },
+                new Supplier { Id = 2, Name = "БытПоставка", ContactPhone = "+7 (495) 200-20-20" }
+            };
+
+            orders = new ObservableCollection<Order>
+            {
+                new Order { Id = 1, UserLogin = "user", ProductName = "Стиральная машина", Quantity = 2, OrderDate = DateTime.Today.AddDays(-1), Status = "Новый" },
+                new Order { Id = 2, UserLogin = "user", ProductName = "Холодильник", Quantity = 1, OrderDate = DateTime.Today, Status = "В обработке" }
+            };
         }
 
         public ObservableCollection<Product> GetProducts() => products;

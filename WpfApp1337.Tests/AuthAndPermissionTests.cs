@@ -8,59 +8,34 @@ namespace ApplianceStoreIS.Tests
     public class AuthAndPermissionTests
     {
         [TestMethod]
-        public void Register_ThenAuthenticate_User_ReturnsUser()
-        {
-            var authService = new AuthService(new InMemoryStoreRepository());
-            bool registered = authService.Register("Иван Иванов", "ivanov", "Qwerty12", "Qwerty12", UserRole.User, string.Empty, out _);
-            var user = authService.Authenticate("ivanov", "Qwerty12");
-
-            Assert.IsTrue(registered);
-            Assert.IsNotNull(user);
-            Assert.AreEqual(UserRole.User, user.Role);
-        }
-
-        [TestMethod]
         public void Authenticate_WithValidAdminCredentials_ReturnsAdminUser()
         {
             var authService = new AuthService(new InMemoryStoreRepository());
-            bool registered = authService.Register("Администратор", "admin", "Admin123!", "Admin123!", UserRole.Admin, AuthService.PrivilegedRoleCode, out _);
             var user = authService.Authenticate("admin", "Admin123!");
 
-            Assert.IsTrue(registered);
             Assert.IsNotNull(user);
             Assert.AreEqual(UserRole.Admin, user.Role);
-        }
-
-        [TestMethod]
-        public void Register_ManagerWithoutPrivilegedCode_ReturnsFalse()
-        {
-            var authService = new AuthService(new InMemoryStoreRepository());
-            bool result = authService.Register("Менеджер", "manager1", "Qwerty12", "Qwerty12", UserRole.Manager, "", out string error);
-
-            Assert.IsFalse(result);
-            Assert.IsTrue(error.Contains("специальный код"));
         }
 
         [TestMethod]
         public void Register_WithDuplicateLogin_ReturnsFalse()
         {
             var authService = new AuthService(new InMemoryStoreRepository());
-            authService.Register("Иван Иванов", "ivanov", "Qwerty12", "Qwerty12", UserRole.User, string.Empty, out _);
+            bool result = authService.Register("Новый пользователь", "admin", "Qwerty12", UserRole.User, out string error);
 
-            bool duplicateResult = authService.Register("Иван Петров", "ivanov", "Qwerty12", "Qwerty12", UserRole.User, string.Empty, out string error);
-
-            Assert.IsFalse(duplicateResult);
+            Assert.IsFalse(result);
             Assert.IsTrue(error.Length > 0);
         }
 
         [TestMethod]
-        public void Register_WithPasswordMismatch_ReturnsFalse()
+        public void Register_WithCorrectData_AddsUser()
         {
             var authService = new AuthService(new InMemoryStoreRepository());
-            bool result = authService.Register("Пользователь", "user1", "Qwerty12", "Qwerty13", UserRole.User, string.Empty, out string error);
+            bool result = authService.Register("Иван Иванов", "ivanov", "Qwerty12", UserRole.User, out _);
 
-            Assert.IsFalse(result);
-            Assert.IsTrue(error.Contains("не совпадают"));
+            var user = authService.Authenticate("ivanov", "Qwerty12");
+            Assert.IsTrue(result);
+            Assert.IsNotNull(user);
         }
 
         [TestMethod]
@@ -70,10 +45,10 @@ namespace ApplianceStoreIS.Tests
         }
 
         [TestMethod]
-        public void StoreDataService_HasNoSeedProductsByDefault()
+        public void StoreDataService_DefaultProducts_IsNotEmpty()
         {
             var service = new StoreDataService(new InMemoryStoreRepository());
-            Assert.AreEqual(0, service.Products.Count);
+            Assert.IsTrue(service.Products.Count >= 3);
         }
     }
 }
