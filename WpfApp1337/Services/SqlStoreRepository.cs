@@ -255,6 +255,7 @@ BEGIN
         Brand NVARCHAR(80) NOT NULL
     )
 END
+
 IF OBJECT_ID('Suppliers','U') IS NULL
 BEGIN
     CREATE TABLE Suppliers (
@@ -263,6 +264,7 @@ BEGIN
         ContactPhone NVARCHAR(40) NOT NULL
     )
 END
+
 IF OBJECT_ID('Orders','U') IS NULL
 BEGIN
     CREATE TABLE Orders (
@@ -274,11 +276,52 @@ BEGIN
         Status NVARCHAR(40) NOT NULL
     )
 END
+
 IF COL_LENGTH('Orders', 'UserLogin') IS NULL
 BEGIN
     ALTER TABLE Orders ADD UserLogin NVARCHAR(50) NULL;
     UPDATE Orders SET UserLogin = 'legacy_user' WHERE UserLogin IS NULL;
     ALTER TABLE Orders ALTER COLUMN UserLogin NVARCHAR(50) NOT NULL;
+END
+
+IF NOT EXISTS (SELECT 1 FROM Users WHERE Login='admin')
+BEGIN
+    INSERT INTO Users(Login, Password, FullName, Role)
+    VALUES ('admin', 'Admin123!', N'Системный администратор', 'Admin')
+END
+
+IF NOT EXISTS (SELECT 1 FROM Users WHERE Login='manager')
+BEGIN
+    INSERT INTO Users(Login, Password, FullName, Role)
+    VALUES ('manager', 'Manager123!', N'Менеджер магазина', 'Manager')
+END
+
+IF NOT EXISTS (SELECT 1 FROM Users WHERE Login='user')
+BEGIN
+    INSERT INTO Users(Login, Password, FullName, Role)
+    VALUES ('user', 'User123!', N'Покупатель', 'User')
+END
+
+IF NOT EXISTS (SELECT 1 FROM Products)
+BEGIN
+    INSERT INTO Products(Name, Category, Price, Quantity, Brand) VALUES
+    (N'Стиральная машина', N'Крупная техника', 45990, 8, N'LG'),
+    (N'Пылесос', N'Малая техника', 12990, 15, N'Samsung'),
+    (N'Холодильник', N'Крупная техника', 73990, 4, N'Bosch')
+END
+
+IF NOT EXISTS (SELECT 1 FROM Suppliers)
+BEGIN
+    INSERT INTO Suppliers(Name, ContactPhone) VALUES
+    (N'ТехноОпт', N'+7 (495) 100-10-10'),
+    (N'БытПоставка', N'+7 (495) 200-20-20')
+END
+
+IF NOT EXISTS (SELECT 1 FROM Orders)
+BEGIN
+    INSERT INTO Orders(UserLogin, ProductName, Quantity, OrderDate, Status) VALUES
+    (N'user', N'Стиральная машина', 2, DATEADD(DAY,-2,GETDATE()), N'Новый'),
+    (N'user', N'Пылесос', 1, DATEADD(DAY,-1,GETDATE()), N'В обработке')
 END";
 
             using (var conn = new SqlConnection(appConnection))
