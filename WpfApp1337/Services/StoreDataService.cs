@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Collections.ObjectModel;
 using ApplianceStoreIS.Models;
 
 namespace ApplianceStoreIS.Services
@@ -36,6 +38,11 @@ namespace ApplianceStoreIS.Services
         {
             var order = new Order
             {
+        public void AddOrder(string userLogin, string productName, int quantity)
+        {
+            var order = new Order
+            {
+                UserLogin = userLogin,
                 ProductName = productName,
                 Quantity = quantity,
                 OrderDate = DateTime.Now,
@@ -52,6 +59,14 @@ namespace ApplianceStoreIS.Services
         public ObservableCollection<Order> GetOrders()
         {
             return new ObservableCollection<Order>(Orders);
+        public ObservableCollection<Order> GetOrdersForUser(string userLogin, bool includeAll)
+        {
+            if (includeAll)
+            {
+                return new ObservableCollection<Order>(Orders);
+            }
+
+            return new ObservableCollection<Order>(Orders.Where(o => o.UserLogin == userLogin));
         }
     }
 }

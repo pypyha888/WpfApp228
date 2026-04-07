@@ -14,6 +14,8 @@ namespace ApplianceStoreIS.Views
         private readonly UserAccount currentUser;
         private readonly StoreDataService storeDataService;
         private readonly ObservableCollection<CartItem> cartItems;
+        private readonly AuthService authService;
+        private readonly StoreDataService storeDataService;
         private ICollectionView productsView;
 
         public DashboardWindow(UserAccount user, AuthService authService, StoreDataService storeDataService)
@@ -29,6 +31,12 @@ namespace ApplianceStoreIS.Views
             DataContext = storeDataService;
             CartDataGrid.ItemsSource = cartItems;
             OrdersDataGrid.ItemsSource = storeDataService.GetOrders();
+            OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
+            this.authService = authService;
+            this.storeDataService = storeDataService;
+
+            UserHeaderTextBlock.Text = $"Пользователь: {currentUser.FullName} | Роль: {currentUser.Role}";
+            DataContext = storeDataService;
 
             productsView = CollectionViewSource.GetDefaultView(storeDataService.Products);
             ProductsDataGrid.ItemsSource = productsView;
@@ -228,6 +236,11 @@ namespace ApplianceStoreIS.Views
 
             cartItems.Clear();
             OrdersDataGrid.ItemsSource = storeDataService.GetOrders();
+                storeDataService.AddOrder(currentUser.Login, item.ProductName, item.Quantity);
+            }
+
+            cartItems.Clear();
+            OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
             UpdateCartSummary();
 
             MessageBox.Show("Заказ(ы) успешно оформлен(ы).", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -248,6 +261,7 @@ namespace ApplianceStoreIS.Views
             }
 
             OrdersDataGrid.ItemsSource = storeDataService.GetOrders();
+            OrdersDataGrid.ItemsSource = storeDataService.GetOrdersForUser(currentUser.Login, PermissionService.CanViewAllTables(currentUser.Role));
             ApplyFilters();
         }
 
